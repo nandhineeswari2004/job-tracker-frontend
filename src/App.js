@@ -1,24 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import EditJob from "./components/EditJob";
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [showSignup, setShowSignup] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* ✅ Default route */}
+        <Route
+          path="/"
+          element={
+            user ? (
+              <Navigate to="/dashboard" />
+            ) : showSignup ? (
+              <Signup onSignup={() => setShowSignup(false)} />
+            ) : (
+              <Login onLogin={setUser} onSwitch={() => setShowSignup(true)} />
+            )
+          }
+        />
+
+        {/* ✅ Dashboard route */}
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard /> : <Navigate to="/" />}
+        />
+
+        {/* ✅ Edit Job route - no props needed now */}
+        <Route
+          path="/edit-job/:id"
+          element={user ? <EditJob /> : <Navigate to="/" />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
